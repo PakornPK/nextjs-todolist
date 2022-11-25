@@ -1,20 +1,44 @@
-import Button from "../components/Button/Button"
-import Title from "../components/Title/Title"
 import List from "../components/List/ItemList"
+import { useSetRecoilState } from "recoil"
+import { todoListState } from "../store"
+import { useState } from "react";
+
+let id = 0;
+function getId() {
+  return id++;
+}
 
 export default () => {
+  const [inputValue, setInputValue] = useState('');
+  const setTodoList = useSetRecoilState(todoListState);
+
+  const onChange = (e: any) => {
+    setInputValue(e.target.value);
+  };
+
+  const addItem = () => {
+    setTodoList((oldTodoList) => [
+      ...oldTodoList,
+      {
+        no: getId(),
+        detail: inputValue,
+        isDone: false,
+      }])
+    setInputValue('');
+  }
+  
   return (
     <>
       <div className="container">
         <div className="row text-center">
-          <Title textTitle="my-to-do-list" />
+          <h1>to-do-list</h1>
         </div>
         <div className="row text-center">
           <div className="col">
-            <input></input>
+            <input type="text" value={inputValue} onChange={onChange} />
           </div>
           <div className="col">
-            <Button btnText="add to-do" />
+            <button className="btn btn-primary" onClick={addItem}>add to-do</button>
           </div>
         </div>
         <div className="row">
@@ -24,3 +48,5 @@ export default () => {
     </>
   )
 }
+
+//https://recoiljs.org/docs/basic-tutorial/selectors
