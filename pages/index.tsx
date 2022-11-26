@@ -1,8 +1,16 @@
-import { Container, Row, Col, Text, Input, Button, Table, Spacer,Checkbox  } from '@nextui-org/react';
+import { Container, Row, Col, Text, Input, Button, Table, Spacer,Checkbox, FormElement  } from '@nextui-org/react';
+import React, { useState } from 'react';
 import { getTodolist, setTodolist } from '../store/todolistState'
 
+let id = 0;
+function getId() {
+  return id++;
+}
+
 export default () => {
+  const [task, setTask] = useState('')
   const todo= getTodolist()
+  const setNewTask = setTodolist()
   const columns = [
     {
       key: "id",
@@ -18,10 +26,23 @@ export default () => {
     },
   ];
 
-  // const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {}
+  const handleChange = (e: React.ChangeEvent<FormElement>):void => {
+    setTask(e.currentTarget.value)
+  }
 
-  // setTodo(test)
-  // setTodolist()
+  const handlePress = () => { 
+    const newTask: ITodolists = { 
+      key: getId().toString(),
+      id: getId(),
+      task: task,
+      isComplete: false
+    }
+    
+    setNewTask((oldTodoList: ITodolists[]) => [...oldTodoList, newTask]);
+    setTask('')
+  }
+
+
   return (
     <Container gap={0}>
       <Row gap={1} justify='center' align='center'>
@@ -34,7 +55,8 @@ export default () => {
             bordered
             width='100%'
             css={{backgroundColor: "#fff"}}
-            // onChange={onChange}
+            value={task}
+            onChange={handleChange}
           />
         </Col>
         <Col span={4}>
@@ -43,6 +65,7 @@ export default () => {
             css={{
               width:"100%"
             }}
+            onClick={handlePress}
           >Add</Button>
         </Col>
       </Row>

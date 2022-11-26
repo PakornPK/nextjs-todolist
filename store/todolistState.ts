@@ -1,4 +1,4 @@
-import { atom, useRecoilState, useResetRecoilState } from "recoil"
+import { atom, useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil"
 
 const todolistState = atom({
     key: "todolistState",
@@ -7,4 +7,4 @@ const todolistState = atom({
 
 
 export const getTodolist = () => useRecoilState(todolistState)[0]
-export const setTodolist = () => useResetRecoilState(todolistState)
+export const setTodolist = () => useSetRecoilState(todolistState)
