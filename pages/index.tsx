@@ -1,15 +1,26 @@
-import { Container, Row, Col, Text, Input, Button, Table, Spacer,Checkbox, FormElement  } from '@nextui-org/react';
+import {
+  Container,
+  Row,
+  Col,
+  Text,
+  Input,
+  Button,
+  Table,
+  Spacer,
+  Checkbox,
+  FormElement,
+  Tooltip,
+} from '@nextui-org/react';
 import React, { useState } from 'react';
 import { getTodolist, setTodolist } from '../store/todolistState'
-
-let id = 0;
-function getId() {
-  return id++;
-}
+import { IconButton } from '../Components/IconButton'
+import { EditIcon } from '../Components/EditIcon'
+import { DeleteIcon } from '../Components/DeleteIcon'
 
 export default () => {
   const [task, setTask] = useState('')
-  const todo= getTodolist()
+  const [id, setId] = useState(0)
+  const todo = getTodolist()
   const setNewTask = setTodolist()
   const columns = [
     {
@@ -24,22 +35,26 @@ export default () => {
       key: "isComplete",
       label: "STATUS",
     },
+    {
+      key: "actions",
+      label: "ACTIONS",
+    }
   ];
-
-  const handleChange = (e: React.ChangeEvent<FormElement>):void => {
+  const handleChange = (e: React.ChangeEvent<FormElement>): void => {
     setTask(e.currentTarget.value)
   }
 
-  const handlePress = () => { 
-    const newTask: ITodolists = { 
-      key: getId().toString(),
-      id: getId(),
+  const handlePress = () => {
+    const newTask: ITodolists = {
+      key: id.toString(),
+      id: id + 1,
       task: task,
       isComplete: false
     }
-    
+
     setNewTask((oldTodoList: ITodolists[]) => [...oldTodoList, newTask]);
     setTask('')
+    setId(newTask.id)
   }
 
 
@@ -54,16 +69,16 @@ export default () => {
             id='input-task'
             bordered
             width='100%'
-            css={{backgroundColor: "#fff"}}
+            css={{ backgroundColor: "#fff" }}
             value={task}
             onChange={handleChange}
           />
         </Col>
         <Col span={4}>
-          <Button 
-            id='button-add' 
+          <Button
+            id='button-add'
             css={{
-              width:"100%"
+              width: "100%"
             }}
             onClick={handlePress}
           >Add</Button>
@@ -73,7 +88,6 @@ export default () => {
       <Row gap={1} justify='center' align='center'>
         <Col span={12}>
           <Table
-            id='table-data'
             css={{
               height: "auto",
               minWidth: "100%",
@@ -82,17 +96,45 @@ export default () => {
           >
             <Table.Header columns={columns}>
               {(column) => (
-                <Table.Column key={column.key} css={{
-                  width: column.key === "task"? "60%": "20%"
-                }}>{column.label}</Table.Column>
+                <Table.Column 
+                  key={column.key}
+                  hideHeader={column.key === "actions"}
+                  align={column.key === "actions" ? "center" : "start"} 
+                  css={{
+                    width: column.key === "task" ? "70%" : "10%"
+                  }}>
+                  {column.label}
+                </Table.Column>
               )}
             </Table.Header>
             <Table.Body items={todo}>
-              {(item : any) => (
-                <Table.Row key={item.key}>
-                  {(col) => col === "isComplete" ? 
-                    <Table.Cell>{<Checkbox defaultSelected={item[col]} />}</Table.Cell> : 
-                    <Table.Cell>{item[col]}</Table.Cell>}
+              {(item: any) => (
+                <Table.Row>
+                  <Table.Cell>{item['id']}</Table.Cell>
+                  <Table.Cell>{item['task']}</Table.Cell>
+                  <Table.Cell>{<Checkbox defaultSelected={item["isComplete"]} />}</Table.Cell>
+                  <Table.Cell>
+                    <Row justify="center" align="center">
+                      <Col css={{ d: "flex" }}>
+                        <Tooltip content="Edit Task">
+                          <IconButton onClick={() => console.log("Edit task", item?.id)}>
+                            <EditIcon size={20} fill="#979797" />
+                          </IconButton>
+                        </Tooltip>
+                      </Col>
+                      <Col css={{ d: "flex" }}>
+                        <Tooltip
+                          content="Delete Task"
+                          color="error"
+                          onClick={() => console.log("Delete task", item?.id)}
+                        >
+                          <IconButton>
+                            <DeleteIcon size={20} fill="#FF0080" />
+                          </IconButton>
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </Table.Cell>
                 </Table.Row>
               )}
             </Table.Body>

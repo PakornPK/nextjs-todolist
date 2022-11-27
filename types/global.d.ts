@@ -3,7 +3,7 @@ export {};
 declare global { 
     interface ITodolists {
         key: String,
-        id: Number, 
+        id: number, 
         task: String,
         isComplete: Boolean
     }    
